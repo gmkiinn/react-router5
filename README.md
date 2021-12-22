@@ -1,70 +1,344 @@
-# Getting Started with Create React App
+# React Router 5 Basics
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Browser Router
 
-## Available Scripts
+Browser router component takes history object from browser and sends to child components.
 
-In the project directory, you can run:
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
+import App from './App';
+import './index.css';
+import 'bootstrap/dist/css/bootstrap.css';
 
-### `npm start`
+ReactDOM.render(
+  <React.StrictMode>
+    <Router>
+      <App />
+    </Router>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Link component
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Anchor tag makes full round trip to server. It sends request to server with mentioned url and renders the UI with response. Link Component does change only url of address barand doesnot make any request to server.
 
-### `npm test`
+```js
+// using achor tags
+import React from 'react';
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+function Navbar() {
+  return (
+    <nav className='navbar navbar-expand-sm navbar-light bg-light'>
+      <div className='container-fluid'>
+        <a className='navbar-brand' href='/'>
+          Router
+        </a>
+        <ul className='navbar-nav'>
+          <li className='nav-item'>
+            <a href='/home' className='nav-link'>
+              Home
+            </a>
+          </li>
+          <li className='nav-item'>
+            <a href='/about' className='nav-link'>
+              About
+            </a>
+          </li>
+          <li className='nav-item'>
+            <a href='/projects' className='nav-link'>
+              Projects
+            </a>
+          </li>
+          <li className='nav-item'>
+            <a href='/contact-us' className='nav-link'>
+              Contact
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  );
+}
 
-### `npm run build`
+export default Navbar;
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+// using Link component
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+function Navbar() {
+  return (
+    <nav className='navbar navbar-expand-sm navbar-light bg-light'>
+      <div className='container-fluid'>
+        <Link className='navbar-brand' to='/'>
+          Router
+        </Link>
+        <ul className='navbar-nav'>
+          <li className='nav-item'>
+            <Link to='/home' className='nav-link'>
+              Home
+            </Link>
+          </li>
+          <li className='nav-item'>
+            <Link to='/about' className='nav-link'>
+              About
+            </Link>
+          </li>
+          <li className='nav-item'>
+            <Link to='/projects' className='nav-link'>
+              Projects
+            </Link>
+          </li>
+          <li className='nav-item'>
+            <Link to='/contact-us' className='nav-link'>
+              Contact
+            </Link>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  );
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+export default Navbar;
+```
 
-### `npm run eject`
+### Route and Switch Component
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Route component sees URL in address bar and checks the path mentioned in route component includes in URL. If path is there in URL, Route component renders child component.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Switch component helps to Route components to render single route component, that path is in URL. Specific Route should goes to top.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+exact property of Route makes to render the child component when path is exactly same to url.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```js
+import './App.css';
+import { Route, Switch } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './components/Home';
+import About from './components/About';
+import Projects from './components/Projects';
+import Contact from './components/Contact';
 
-## Learn More
+function App() {
+  return (
+    <div className='App'>
+      <Navbar />
+      <Switch>
+        <Route path='/home'>
+          <Home />
+        </Route>
+        <Route path='/about'>
+          <About />
+        </Route>
+        <Route path='/projects'>
+          <Projects />
+        </Route>
+        <Route path='/contact-us'>
+          <Contact />
+        </Route>
+        <Route path='/'>
+          <Home />
+        </Route>
+      </Switch>
+    </div>
+  );
+}
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+export default App;
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Route props
 
-### Code Splitting
+Route component will send props to component when component is placed as prop to Route.
+To send custom props to render component use render property.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+props
 
-### Analyzing the Bundle Size
+- history
+- location
+- match
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Route Params and Query Params
 
-### Making a Progressive Web App
+```js
+// App.js
+function App() {
+  return (
+    <div className='App'>
+      <Navbar />
+      <Switch>
+        <Route path='/home' component={Home} />
+        <Route
+          path='/about'
+          render={(props) => <About {...props} phone={'887-765-7655'} />}
+        />
+        <Route path='/projects/:id' component={Project} />
+        <Route path='/projects' component={Projects} />
+        <Route path='/contact-us'>
+          <Contact />
+        </Route>
+        <Route path={'/not-found'} component={NotFound} />
+        <Redirect exact from='/' to='/home' />
+        <Redirect to='/not-found' />
+      </Switch>
+    </div>
+  );
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+// Projects.jsx
+class Projects extends Component {
+  state = {
+    projects: [
+      { id: 1, name: 'project1' },
+      { id: 2, name: 'project2' },
+      { id: 3, name: 'project3' },
+      { id: 4, name: 'project4' },
+    ],
+  };
+  render() {
+    const { match } = this.props;
+    return (
+      <div className='mt-5'>
+        <h2>Projects</h2>
+        {this.state.projects.map((project) => (
+          <div
+            className='card m-2'
+            style={{ width: 200, display: 'inline-block' }}
+          >
+            <div className='card-body'>
+              <h5 className='card-title'>{project.name}</h5>
+              <Link to={`${match.path}/${project.id}`} className='card-link'>
+                see more
+              </Link>
+            </div>
+          </div>
+        ))}
+        <div
+          className='card m-2'
+          style={{ width: 200, display: 'inline-block' }}
+        >
+          <div className='card-body'>
+            <h5 className='card-title'>{'Create Project'}</h5>
+            <Link
+              to={`${match.path}/new/?type=web-development`}
+              className='card-link'
+            >
+              create...
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
 
-### Advanced Configuration
+// Project.jsx
+function Project({ match, location }) {
+  const queryParams = queryString.parse(location.search);
+  return (
+    <div>
+      <h3 className='mt-5'>Project Details</h3>
+      <h4>Project - {match.params.id}</h4>
+      {Object.keys(queryParams).length ? (
+        <p>Project Type: {queryParams['type']}</p>
+      ) : null}
+    </div>
+  );
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Redirect
 
-### Deployment
+```js
+function App() {
+  return (
+    <div className='App'>
+      <Navbar />
+      <Switch>
+        <Route path='/home' component={Home} />
+        <Route
+          path='/about'
+          render={(props) => <About {...props} phone={'887-765-7655'} />}
+        />
+        <Route path='/projects/:id' component={Project} />
+        <Route path='/projects' component={Projects} />
+        <Route path='/contact-us'>
+          <Contact />
+        </Route>
+        <Route path={'/not-found'} component={NotFound} />
+        <Redirect exact from='/' to='/home' />
+        <Redirect to='/not-found' />
+      </Switch>
+    </div>
+  );
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Programatic Navigation
 
-### `npm run build` fails to minify
+history object helps programatic navigation in the application
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- push(path, [state]) - (function) Pushes a new entry onto the history stack
+- replace(path, [state]) - (function) Replaces the current entry on the history stack
+- go(n) - (function) Moves the pointer in the history stack by n entries
+- goBack() - (function) Equivalent to go(-1)
+- goForward() - (function) Equivalent to go(1)
+
+```js
+import React from 'react';
+import queryString from 'query-string';
+
+function Project({ match, location, history }) {
+  const queryParams = queryString.parse(location.search);
+
+  const handleBackButton = () => {
+    history.replace('/projects');
+  };
+  return (
+    <div>
+      <h3 className='mt-5'>Project Details</h3>
+      <h4>Project - {match.params.id}</h4>
+      {Object.keys(queryParams).length ? (
+        <p>Project Type: {queryParams['type']}</p>
+      ) : null}
+      <button onClick={handleBackButton} className='btm btn-sm btn-info'>
+        Back
+      </button>
+    </div>
+  );
+}
+
+export default Project;
+```
+
+### Nested Routing
+
+```js
+function Contact({ match }) {
+  console.log(match);
+  return (
+    <div>
+      <h3>Contact Us</h3>
+      <ul className='nav' style={{ justifyContent: 'center' }}>
+        <li className='nav-item'>
+          <Link to={`${match.path}/phone`} className='nav-link'>
+            Phone
+          </Link>
+        </li>
+        <li className='nav-item'>
+          <Link to={`${match.path}/email`} className='nav-link'>
+            Email
+          </Link>
+        </li>
+      </ul>
+      <Route path={`${match.path}/phone`} component={Phone} />
+      <Route path={`${match.path}/email`} component={Email} />
+    </div>
+  );
+}
+```
