@@ -21,7 +21,7 @@ function App() {
         <Route path='/projects/:id' component={Project} />
         <Route path='/projects' component={Projects} />
         <Route path='/contact-us' component={Contact} />
-        <Route path={'/not-found'} component={NotFound} />
+        <Route path='/not-found' component={NotFound} />
         <Redirect exact from='/' to='/home' />
         <Redirect to='/not-found' />
       </Switch>
